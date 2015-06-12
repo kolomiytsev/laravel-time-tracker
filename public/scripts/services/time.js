@@ -8,8 +8,13 @@
 
     function time($resource) {
 
-        // ngResource call to our static data
-        var Time = $resource('data/time.json');
+        // ngResource call to the API with id as a paramaterized URL
+        // and setup for the update method
+        var Time = $resource('api/time/:id', {}, {
+            update: {
+                method: 'PUT'
+            }
+        });
 
         // $promise.then allows us to intercept the results of the
         // query so we can add the loggedTime property
@@ -54,10 +59,42 @@
             }
         }
 
+        // Grab data passed from the view and send
+        // a POST request to the API to save the data
+        function saveTime(data) {
+
+            return Time.save(data).$promise.then(function(success) {
+                console.log(success);
+            }, function(error) {
+                console.log(error);
+            });
+        }
+
+        // Use a PUT request to save the updated data passed in
+        function updateTime(data) {
+            return Time.update({id:data.id}, data).$promise.then(function(success) {
+                console.log(success);
+            }, function(error) {
+                console.log(error);
+            });
+        }
+
+        // Send a DELETE request for a specific time entry
+        function deleteTime(id) {
+            return Time.delete({id:id}).$promise.then(function(success) {
+                console.log(success);
+            }, function(error) {
+                console.log(error);
+            });
+        }
+
         return {
             getTime: getTime,
             getTimeDiff: getTimeDiff,
-            getTotalTime: getTotalTime
+            getTotalTime: getTotalTime,
+            saveTime: saveTime,
+            updateTime: updateTime,
+            deleteTime: deleteTime
         }
     }
 })();
